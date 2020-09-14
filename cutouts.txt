@@ -1,0 +1,28 @@
+FUNCTIONS AND CODE I STARTED ON / THOUGHT WERE A GOOD IDEA INITIALLY BUT NEVER ENDED UP USING
+
+# never ended up using this function, may cannibalise from it to deal with links that requests couldn't ping, but
+# as of 05.09.2020 haven't gotten there yet
+
+def retry_failed_requests(zip_archive, request_fails, request_function):
+    """
+    Given a dict of urls that on which requests fails, run the request function one each url again, up to three times.
+    If some urls sill won't download after three tries, print out recalcitrant urls plus their filepaths (which contain
+    information on unit and date of data files).
+
+    :param zip_archive: zip archive where file is to be deposited
+    :param request_fails: dict, keys are urls, values are file_paths (as used for inserting them in the zip archive)
+    :param request_function: str, shows which function that does requests we want; must be either 'download_data_to_zip'
+                             or 'get_article_urls'
+    :return: None
+    """
+    for i in range(0, 3):
+
+        if request_function == 'download_data_to_zip':
+            [download_data_to_zip(url, f_path, zip_archive, request_fails)
+             for url, f_path in request_fails.items()]
+        else:  # request_function == 'get_article_urls'
+            [get_article_urls(day_url, request_fails) for day_url in request_fails]
+
+    if not request_fails:
+        print('FAILED DOWNLOADS')
+        [print(url, ' : ', f_path) for url, f_path in request_fails.items()]
